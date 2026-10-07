@@ -1,0 +1,3 @@
+$kind: collection
+description: Các endpoint quản lý Sản phẩm (Product) vận hành bởi RxJava 3 & jOOQ
+order: 2000

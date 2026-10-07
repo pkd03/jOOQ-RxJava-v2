@@ -1,0 +1,27 @@
+$kind: http-request
+name: 2.4 Tìm kiếm & Phân trang (Single.zip COUNT và SELECT song song)
+description: Single.zip thực thi song song 2 câu lệnh count(*) và select limit/offset để gộp vào PageResponse.
+url: "{{baseUrl}}/api/v1/products?keyword=iPhone&categoryId={{categoryId}}&page=0&size=10"
+method: GET
+queryParams:
+  keyword: iPhone
+  categoryId: "{{categoryId}}"
+  page: "0"
+  size: "10"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("PageResponse structure verified", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(jsonData.data).to.have.property("items");
+          pm.expect(jsonData.data).to.have.property("totalElements");
+          pm.expect(jsonData.data).to.have.property("totalPages");
+          pm.expect(jsonData.data.page).to.eql(0);
+      });
+    language: text/javascript
+order: 4000

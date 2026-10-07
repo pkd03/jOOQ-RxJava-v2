@@ -1,0 +1,31 @@
+$kind: http-request
+description: Tạo danh mục mới. Mã code sử dụng timestamp để tránh trùng lặp khi chạy nhiều lần.
+url: "{{baseUrl}}/api/v1/categories"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+        "code": "ELEC_{{$timestamp}}",
+        "name": "Thiết bị điện tử & Gia dụng"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201 Created", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("ApiResponse has success = true", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(jsonData.code).to.eql("SUCCESS");
+          pm.expect(jsonData.data).to.have.property("id");
+
+          // Tự động lưu categoryId vào Collection Variable
+          pm.collectionVariables.set("categoryId", jsonData.data.id);
+      });
+    language: text/javascript
+order: 1000

@@ -1,0 +1,13 @@
+# Use this workspace to collaborate
+workspace:
+  id: 5a64f0e8-dfac-41f4-81f7-5f3c13d482da
+
+localResources:
+  collections:
+    - ../PKD V3 - Enterprise REST API (jOOQ & RxJava 3)
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ../postman/collections/PKD V3 - Enterprise REST API (jOOQ & RxJava 3): 7b2eaaae-c6d6-4f4b-9755-c2b6fefc39fb

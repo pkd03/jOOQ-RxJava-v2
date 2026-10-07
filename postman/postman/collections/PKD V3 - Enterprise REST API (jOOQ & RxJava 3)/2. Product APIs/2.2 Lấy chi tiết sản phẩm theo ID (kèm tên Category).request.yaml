@@ -1,0 +1,19 @@
+$kind: http-request
+description: Lấy chi tiết sản phẩm JOIN sang bảng Categories để lấy tên danh mục.
+url: "{{baseUrl}}/api/v1/products/{{productId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Product details match", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(jsonData.data.id).to.eql(Number(pm.collectionVariables.get("productId")));
+          pm.expect(jsonData.data.categoryName).to.not.be.null;
+      });
+    language: text/javascript
+order: 2000

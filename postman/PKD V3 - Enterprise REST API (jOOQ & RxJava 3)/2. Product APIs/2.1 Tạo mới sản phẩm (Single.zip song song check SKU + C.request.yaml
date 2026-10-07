@@ -1,0 +1,35 @@
+$kind: http-request
+name: 2.1 Tạo mới sản phẩm (Single.zip song song check SKU + Category)
+description: Kích hoạt Single.zip kiểm tra đồng thời SKU và Category trước khi ghi DB.
+url: "{{baseUrl}}/api/v1/products"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+        "categoryId": {{categoryId}},
+        "sku": "PROD-IPHONE-{{$timestamp}}",
+        "name": "iPhone 15 Pro Max 256GB Natural Titanium",
+        "price": 31990000.00,
+        "status": "ACTIVE"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201 Created", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Product created with correct SKU and CategoryName", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(jsonData.data).to.have.property("id");
+          pm.expect(jsonData.data.isDeleted).to.eql(false);
+
+          // Tự động lưu productId vào Collection Variable
+          pm.collectionVariables.set("productId", jsonData.data.id);
+      });
+    language: text/javascript
+order: 1000

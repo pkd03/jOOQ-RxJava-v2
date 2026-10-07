@@ -1,0 +1,12 @@
+$kind: collection
+description: |-
+  Bộ sưu tập Postman hoàn chỉnh để kiểm thử các API của dự án PKD V3 (Spring Boot 3 + jOOQ 3.19.16 + RxJava 3).
+
+  Đặc điểm:
+  - Đã tích hợp sẵn biến Collection `baseUrl`, `categoryId`, `productId`.
+  - Tự động trích xuất ID từ response vào biến sau khi tạo Category và Product.
+  - Bao gồm các kịch bản kiểm thử luồng chuẩn (Happy path) và luồng bắt lỗi (Duplicate SKU, Not Found, Validation).
+variables:
+  baseUrl: http://localhost:8080
+  categoryId: "1"
+  productId: "1"

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: pkdv3-test
+  datasource:
+    url: jdbc:h2:mem:pkdv3_db;MODE=PostgreSQL;DATABASE_TO_UPPER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+    hikari:
+      pool-name: Pkdv3TestHikariCP
+      maximum-pool-size: 10
+      minimum-idle: 5
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      continue-on-error: true
+  jooq:
+    sql-dialect: h2
+
+app:
+  scheduler:
+    db-pool-size: 10
+    db-queue-capacity: 100

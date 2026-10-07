@@ -1,0 +1,18 @@
+$kind: http-request
+description: Lấy toàn bộ danh mục đang hoạt động (chưa xóa mềm).
+url: "{{baseUrl}}/api/v1/categories"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Returned a list of active categories", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(Array.isArray(jsonData.data)).to.be.true;
+      });
+    language: text/javascript
+order: 3000

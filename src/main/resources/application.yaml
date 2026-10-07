@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: pkdv3
+
+  # Cấu hình DataSource kết nối PostgreSQL
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pkdv3_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    # Cấu hình HikariCP Connection Pool tối ưu
+    hikari:
+      pool-name: Pkdv3HikariCP
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1200000
+
+  # Tự động thực thi file schema.sql và data.sql khi ứng dụng khởi động
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:schema.sql
+      data-locations: classpath:data.sql
+      continue-on-error: true
+
+  # jOOQ SQL Dialect
+  jooq:
+    sql-dialect: postgres
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Cấu hình Bounded Scheduler đồng bộ với HikariCP Pool
+app:
+  scheduler:
+    db-pool-size: 10
+    db-queue-capacity: 100
+
+# Cấu hình Swagger / OpenAPI Documentation
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha

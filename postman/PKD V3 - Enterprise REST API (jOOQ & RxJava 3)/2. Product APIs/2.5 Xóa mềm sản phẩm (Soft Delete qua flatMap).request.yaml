@@ -1,0 +1,17 @@
+$kind: http-request
+description: Cập nhật cờ is_deleted = true. Bản ghi không bị xóa vật lý trong database.
+url: "{{baseUrl}}/api/v1/products/{{productId}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Soft delete successful message", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+      });
+    language: text/javascript
+order: 5000

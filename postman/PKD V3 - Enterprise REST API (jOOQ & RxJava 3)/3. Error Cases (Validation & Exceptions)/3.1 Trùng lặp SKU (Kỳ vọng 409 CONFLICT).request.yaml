@@ -1,0 +1,35 @@
+$kind: http-request
+description: Nếu gửi 2 lần liên tiếp request này, lần thứ 2 chắc chắn trả về 409 CONFLICT.
+url: "{{baseUrl}}/api/v1/products"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+        "categoryId": {{categoryId}},
+        "sku": "{{fixedSku}}",
+        "name": "Sản phẩm test trùng SKU",
+        "price": 1000000.00,
+        "status": "ACTIVE"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      // Chuẩn bị SKU cố định để thử nghiệm trùng lặp
+      pm.variables.set("fixedSku", "TEST-DUP-SKU-FIXED");
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 409 Conflict", function () {
+          pm.response.to.have.status(409);
+      });
+
+      pm.test("ErrorCode is DUPLICATE_RESOURCE", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(false);
+          pm.expect(jsonData.code).to.eql("DUPLICATE_RESOURCE");
+      });
+    language: text/javascript
+order: 1000

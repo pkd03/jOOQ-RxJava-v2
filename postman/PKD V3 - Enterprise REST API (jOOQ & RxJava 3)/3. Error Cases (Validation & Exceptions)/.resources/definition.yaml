@@ -1,0 +1,3 @@
+$kind: collection
+description: Các kịch bản kiểm thử ngoại lệ và xác thực dữ liệu qua GlobalExceptionHandler
+order: 3000

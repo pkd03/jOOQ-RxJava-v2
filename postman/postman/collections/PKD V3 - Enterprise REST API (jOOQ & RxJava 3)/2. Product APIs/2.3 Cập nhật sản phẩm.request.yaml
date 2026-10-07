@@ -1,0 +1,29 @@
+$kind: http-request
+description: Cập nhật sản phẩm với kiểm tra đồng thời sự tồn tại của sản phẩm và category.
+url: "{{baseUrl}}/api/v1/products/{{productId}}"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+        "categoryId": {{categoryId}},
+        "name": "iPhone 15 Pro Max 512GB (Updated Edition)",
+        "price": 33990000.00,
+        "status": "ACTIVE"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Updated name and price correctly", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(jsonData.data.price).to.eql(33990000.00);
+      });
+    language: text/javascript
+order: 3000

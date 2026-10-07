@@ -1,0 +1,31 @@
+$kind: http-request
+name: 3.3 Dữ liệu đầu vào sai validation (Kỳ vọng 400 BAD_REQUEST)
+description: Vi phạm toàn bộ Bean Validation annotations (@NotBlank, @NotNull, @DecimalMin).
+url: "{{baseUrl}}/api/v1/products"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+        "categoryId": null,
+        "sku": "",
+        "name": "",
+        "price": -100.00
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400 Bad Request", function () {
+          pm.response.to.have.status(400);
+      });
+
+      pm.test("ErrorCode is VALIDATION_FAILED", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(false);
+          pm.expect(jsonData.code).to.eql("VALIDATION_FAILED");
+          pm.expect(jsonData.data).to.be.an("object");
+      });
+    language: text/javascript
+order: 3000

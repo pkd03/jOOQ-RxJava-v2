@@ -1,0 +1,18 @@
+$kind: http-request
+description: Lấy thông tin danh mục bằng categoryId đã lưu tự động.
+url: "{{baseUrl}}/api/v1/categories/{{categoryId}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Verify category details", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(true);
+          pm.expect(jsonData.data.id).to.eql(Number(pm.collectionVariables.get("categoryId")));
+      });
+    language: text/javascript
+order: 2000

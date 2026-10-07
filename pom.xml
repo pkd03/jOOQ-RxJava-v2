@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.5</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.example</groupId>
+	<artifactId>pkdv3</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>pkdv3</name>
+	<description>Enterprise Spring Boot with jOOQ and RxJava 3</description>
+
+	<properties>
+		<java.version>17</java.version>
+		<!-- KHÓA CỨNG VERSION jOOQ: Tránh xung đột bytecode Java 17 (class version 65 vs 61) -->
+		<jooq.version>3.19.16</jooq.version>
+		<rxjava.version>3.1.8</rxjava.version>
+		<springdoc.version>2.5.0</springdoc.version>
+		<commons-lang3.version>3.14.0</commons-lang3.version>
+		<build-helper-plugin.version>3.5.0</build-helper-plugin.version>
+	</properties>
+
+	<dependencies>
+		<!-- Spring Boot Web (Spring MVC + Embedded Tomcat chuẩn blocking) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- Bean Validation: Kiểm tra @Valid, @NotBlank, @Min,... -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- Spring Boot JDBC: Bao gồm HikariCP connection pool -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<!-- PostgreSQL JDBC Driver -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- jOOQ Core & Extensions -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta-extensions</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
+		<!-- RxJava 3: Reactive stream engine -->
+		<dependency>
+			<groupId>io.reactivex.rxjava3</groupId>
+			<artifactId>rxjava</artifactId>
+			<version>${rxjava.version}</version>
+		</dependency>
+
+		<!-- Apache Commons Lang3: Cung cấp Pair/Triple cho các toán tử zip đa biến -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+		</dependency>
+
+		<!-- OpenAPI 3 / Swagger UI: Tài liệu hóa REST API chuẩn Spring MVC -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+
+		<!-- Project Lombok -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- H2 In-Memory Database phục vụ kiểm thử tích hợp (Integration Test) -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Spring Boot Test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Spring Boot Packaging Plugin -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!-- Compiler Plugin: Thiết lập Java 17 và Lombok Annotation Processing -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<!-- jOOQ Codegen Plugin: Sinh mã type-safe trực tiếp từ schema.sql -->
+			<plugin>
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>${jooq.version}</version>
+				<executions>
+					<execution>
+						<id>jooq-codegen</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.jooq</groupId>
+						<artifactId>jooq-meta-extensions</artifactId>
+						<version>${jooq.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<generator>
+						<database>
+							<!-- Sử dụng DDLDatabase để phân tích schema.sql mà không cần kết nối DB thật -->
+							<name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
+							<properties>
+								<property>
+									<key>scripts</key>
+									<value>src/main/resources/schema.sql</value>
+								</property>
+								<property>
+									<key>sort</key>
+									<value>alphanumeric</value>
+								</property>
+							</properties>
+						</database>
+						<target>
+							<packageName>com.example.pkdv3.data.jooq.generated</packageName>
+							<directory>target/generated-sources/jooq</directory>
+						</target>
+					</generator>
+				</configuration>
+			</plugin>
+
+			<!-- Build Helper Plugin: Khai báo thư mục jOOQ generated sources vào classpath biên dịch -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>${build-helper-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>add-jooq-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>target/generated-sources/jooq</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

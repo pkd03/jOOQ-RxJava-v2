@@ -1,0 +1,30 @@
+$kind: http-request
+description: Tạo sản phẩm với categoryId không tồn tại trong DB, RxJava Single.zip phát hiện và ném ResourceNotFoundException.
+url: "{{baseUrl}}/api/v1/products"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+        "categoryId": 999999,
+        "sku": "NO-CAT-{{$timestamp}}",
+        "name": "Sản phẩm không có danh mục",
+        "price": 500000.00,
+        "status": "ACTIVE"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 404 Not Found", function () {
+          pm.response.to.have.status(404);
+      });
+
+      pm.test("ErrorCode is RESOURCE_NOT_FOUND", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.success).to.eql(false);
+          pm.expect(jsonData.code).to.eql("RESOURCE_NOT_FOUND");
+      });
+    language: text/javascript
+order: 2000
